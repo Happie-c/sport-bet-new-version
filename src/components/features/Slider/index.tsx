@@ -9,7 +9,7 @@ interface SliderProps {
 export const Slider: React.FC<SliderProps> = ({ onItemClick }) => {
   return (
     <SliderSection
-      title="Live matches"
+      title="Sports Betting"
       buttonText="All live fixtures"
       variant="default"
       route="/live-betting"

@@ -5,7 +5,7 @@ import { ImgList } from "@/utils";
 
 
 interface SliderSectionProps {
-  title: string | "SportsBetting";
+  title: string | "Sports Betting";
   buttonText: string;
   variant?: 'default' | 'white';
   route?: string;
