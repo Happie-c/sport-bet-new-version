@@ -279,9 +279,10 @@
     text-align: center;
   }
 
-  // .odds-label.first {
-  //   width: 30%;
-  // }
+  .odds-label.first {
+    width: 250px;
+    text-align: left;
+  }
 
   .odds-value {
     color: var(--odds-value);
@@ -292,7 +293,7 @@
   }
 
   .odds-value.middle {
-    margin-left: 42%;
+    margin-left: 20px;
     flex: 1;
     text-align: left;
 
