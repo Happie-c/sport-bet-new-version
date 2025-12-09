@@ -151,6 +151,7 @@ export const Competitions: React.FC<CompetitionsProps> = ({
                         <div className="opacity-50 text-md font-semibold text-[#333] px-2">{r.name}</div>
                         <Leagues
                             key={r.id}
+                            img={getSportAlias()}
                             data={r.competition}
                             onCompetitionClick={handleCompetitionClick}
                         />

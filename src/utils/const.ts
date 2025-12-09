@@ -275,9 +275,9 @@ export const commands = [
     { "command": "get", "params": { "source": "betting", "what": { "sport": ["id", "name", "alias", "order"], "competition": ["id", "order", "name"], "region": ["id", "name", "alias", "order"], "game": ["id", "type"] }, "where": { "game": { "@or": [{ "visible_in_prematch": 1 }, { "type": { "@in": [0, 2] } }] }, "sport": { "type": { "@nin": [1, 4] } } }, "subscribe": true }, "rid": "902642a8" },
 ];
 
-export const getSportsData = () => {
-    return { "command": "get", "params": { "source": "betting", "what": { "sport": ["id", "name", "alias", "order"], "competition": ["id", "order", "name"], "region": ["id", "name", "alias", "order"], "game": ["id", "type"] }, "where": { "game": { "@or": [{ "visible_in_prematch": 1 }, { "type": { "@in": [0, 2] } }] }, "sport": { "type": { "@nin": [1, 4] } } }, "subscribe": true }, "rid": "902642a8" };
-}
+// export const getSportsData = () => {
+//     return { "command": "get", "params": { "source": "betting", "what": { "sport": ["id", "name", "alias", "order"], "competition": ["id", "order", "name"], "region": ["id", "name", "alias", "order"], "game": ["id", "type"] }, "where": { "game": { "@or": [{ "visible_in_prematch": 1 }, { "type": { "@in": [0, 2] } }] }, "sport": { "type": { "@nin": [1, 4] } } }, "subscribe": true }, "rid": "902642a8" };
+// }
 
 export const getGameData = (id: number, alias: string) => {
     return { "command": "get", "params": { "source": "betting", "what": { "game": ["id", "stats", "info", "is_neutral_venue", "add_info_name", "text_info", "markets_count", "type", "start_ts", "is_stat_available", "team1_id", "team1_name", "team2_id", "team2_name", "last_event", "live_events", "match_length", "sport_alias", "sportcast_id", "region_alias", "is_blocked", "show_type", "game_number"], "market": ["id", "group_id", "group_name", "group_order", "type", "name_template", "sequence", "point_sequence", "name", "order", "display_key", "col_count", "express_id", "extra_info", "cashout", "is_new", "has_early_payout"], "event": ["id", "type_1", "price", "name", "base", "home_value", "away_value", "display_column", "order"] }, "where": { "game": { "id": id }, "sport": { "alias": alias } }, "subscribe": true }, "rid": "6f706cd0" };

@@ -4,7 +4,6 @@ import {
     getCompetitionData,
     getGameData,
     getLiveGamesList,
-    getSportsData,
     groupAndSort,
     mergeCompetitionsIntoA,
     mergeGamesIntoA
@@ -184,6 +183,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
                 .filter((c: any) => c);
             setTmpGameData(game)
         }
+        console.log(message, "This is the message!")
     };
     const sendMessage = async (msgData: any) => {
         msgData.id = msgData.id ?? 0;
@@ -191,9 +191,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         msgData.live = msgData.live ?? false;
         if (socket.current?.readyState === WebSocket.OPEN) {
             switch (msgData.type) {
-                case 'SportsData':
-                    socket.current.send(JSON.stringify(getSportsData()));
-                    break;
                 case 'LiveGamesList':
                     socket.current.send(JSON.stringify(getLiveGamesList()));
                     break;
@@ -251,7 +248,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             socket.current?.close();
         };
     }, []);
-
     return (
         <WebSocketContext.Provider value={{ socket: socket.current, isConnected, sportsData, competitionsData, gamesData, liveGamesList, sortedMarketsData, sendMessage }}>
             {children}

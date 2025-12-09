@@ -19,11 +19,11 @@ interface MatchResultItemProps {
 const OddItem = ({ label, value, variant = 'default', base, style }: { label: string, base?: number, value: any, variant?: 'default' | 'white', style: string }) => {
     return (
         <div className={`odds-item ${variant} ${style || ""}`}>
-            <span className="odds-label">{label}</span>
-            <span className="odds-value">{value}</span>
+            <span className="odds-label first">{label ? label : "-"}</span>
+            <span className={`odds-value ${base ? "middle" : ""}`}>{value}</span>
             {
                 base ? (
-                    <span className="odds-value">{base}</span>
+                    <span className="odds-base">{base}</span>
                 ) : ("")
             }
         </div>

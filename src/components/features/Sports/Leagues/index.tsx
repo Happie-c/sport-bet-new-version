@@ -7,7 +7,7 @@ import { ImgList } from '@utils/const';
 import { useNavigate, useParams } from 'react-router-dom';
 
 
-export const LeaguesItem: React.FC<{ league: any; onCompetitionClick?: (competitionId: string) => void }> = ({ league, onCompetitionClick }) => {
+export const LeaguesItem: React.FC<{ img: string; league: any; onCompetitionClick?: (competitionId: string) => void; }> = ({ league, onCompetitionClick, img }) => {
     const { toggleLeagueInCoupon, isLeagueInCoupon } = useSport();
     const navigate = useNavigate();
     const { sportName } = useParams<{ sportName: string }>();
@@ -30,7 +30,7 @@ export const LeaguesItem: React.FC<{ league: any; onCompetitionClick?: (competit
         <div className='league-item-container' onClick={handleLeagueClick}>
             <div className='flex items-center' >
                 <div className='w-12 h-full flex items-center justify-center'>
-                    <img src={ImgList['Default']} alt="Default" width={24} height={24} className='rounded' />
+                    <img src={ImgList[img] ? ImgList[img] : "Default"} alt="Default" width={24} height={24} className='rounded' />
                 </div>
                 <div className='flex flex-col justify-center flex-1'>
                     <div className='country-name'>
@@ -52,13 +52,14 @@ export const LeaguesItem: React.FC<{ league: any; onCompetitionClick?: (competit
 interface LeaguesProps {
     data?: any;
     onCompetitionClick?: (competitionId: string) => void;
+    img?: any;
 }
 
-export const Leagues: React.FC<LeaguesProps> = ({ data, onCompetitionClick }) => {
+export const Leagues: React.FC<LeaguesProps> = ({ data, onCompetitionClick, img }) => {
     return (
         <div className='leagues-container'>
             {Object.values(data).map((league: any) => (
-                <LeaguesItem key={league.id} league={league} onCompetitionClick={onCompetitionClick} />
+                <LeaguesItem key={league.id} league={league} img={img} onCompetitionClick={onCompetitionClick} />
             ))}
         </div>
     )

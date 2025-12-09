@@ -212,8 +212,6 @@ export const LiveBettingMatchList: React.FC = () => {
     const defaultAlias: string = Object.values(filteredGamesData)[0]?.sport_alias || '';
     const [activeCat, setActiveCat] = useState<string>(defaultAlias);
 
-    console.log(filteredCompetitionsData, "competition data", filteredGamesData, "games")
-
     useEffect(() => {
         setActiveCat(defaultAlias)
     }, [defaultAlias])

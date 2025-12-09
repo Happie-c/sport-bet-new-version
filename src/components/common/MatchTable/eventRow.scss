@@ -9,6 +9,7 @@
   padding: 12px;
   gap: 16px;
   min-height: 60px;
+
   &:hover {
     background: var(--bg-card-hover);
   }
@@ -28,6 +29,7 @@
         display: flex;
         align-items: center;
         min-width: 0;
+
         img {
           width: 16px;
           height: 16px;
@@ -35,6 +37,7 @@
           border-radius: 50%;
         }
       }
+
       .team-name {
         color: var(--text-primary);
         font-weight: 600;
@@ -46,6 +49,7 @@
       }
     }
   }
+
   .match-info {
     display: flex;
     align-items: center;
@@ -63,6 +67,7 @@
       line-height: 16px;
     }
   }
+
   .score {
     font-weight: 700;
     line-height: 16px;
@@ -74,6 +79,7 @@
   .white-img {
     filter: brightness(0) invert(1);
   }
+
   // Odds sections
   .odds-section {
     flex-shrink: 0;
@@ -207,6 +213,7 @@
     display: flex;
     align-items: center;
     min-width: 0;
+
     img {
       width: 16px;
       height: 16px;
@@ -214,6 +221,7 @@
       border-radius: 50%;
     }
   }
+
   .team-name {
     color: var(--text-primary);
     font-weight: 600;
@@ -243,18 +251,23 @@
   padding: 1px 8px;
   cursor: pointer;
   color: var(--text-primary);
+
   &.white {
     background: white;
+
     .odds-label {
       color: var(--bg-primary);
     }
-    .odds-value{
+
+    .odds-value {
       color: #008f93;
     }
+
     &:hover {
       background: var(--bg-card-hover);
     }
   }
+
   &:hover {
     background: var(--odds-bg-hover);
   }
@@ -266,16 +279,37 @@
     text-align: center;
   }
 
+  // .odds-label.first {
+  //   width: 30%;
+  // }
+
   .odds-value {
     color: var(--odds-value);
     font-size: 14px;
     font-weight: 600;
     text-align: center;
+
   }
+
+  .odds-value.middle {
+    margin-left: 42%;
+    flex: 1;
+    text-align: left;
+
+  }
+
+  .odds-base {
+    color: var(--odds-value);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+  }
+
   &.default {
     &:first-child {
       border-radius: 8px 0 0 8px;
     }
+
     &:last-child {
       border-radius: 0 8px 8px 0;
     }

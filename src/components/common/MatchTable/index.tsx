@@ -178,7 +178,7 @@ export const MatchEventRow: React.FC<{
                     <div className="stats-icon">
                         <img src={StatsIcon} alt="Stats" width={16} height={16} className='white-img' />
                     </div>
-                    <div className="match-time">{matchTime}</div>
+                    <div className="match-time w-20">{matchTime}</div>
                 </div>
             </div>
 
