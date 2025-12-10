@@ -75,7 +75,6 @@ export const MatchResultItem: React.FC<MatchResultItemProps> = ({
                             }, [isCollapsed]);
 
                             const [marketName,] = title.split("@"); // define here for JSX
-                            const col = Array.isArray(values) ? values.length : 0;
                             const val = Array.isArray(values) ? values : [];
 
                             return (

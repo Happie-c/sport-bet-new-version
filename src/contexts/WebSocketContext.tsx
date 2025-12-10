@@ -10,7 +10,7 @@ import {
     mergeGamesIntoA
 } from "@/utils";
 
-import { Sport, Competition, Game, WSMessage, Region, Market, RecieveMSG } from "@/types";
+import { Sport, Competition, Game, WSMessage } from "@/types";
 
 interface WebSocketContextType {
     socket: WebSocket | null;
@@ -58,8 +58,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     const [competitionsData, setCompetitionsData] = useState<Record<number, Competition>>({});
     const [tmpCompetitionData, setTmpCompetitionData] = useState<Record<number, Competition>>({});
     const [liveGamesList, setLiveGamesList] = useState<Record<number, Sport>>({})
-
-    const [aliasData, setAliasData] = useState('Soccer')
 
     const connectWS = () => {
         if (socket.current?.readyState === WebSocket.OPEN) return;
@@ -147,7 +145,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         } else if (data.competition) {
             const competitions: Competition[] = Object.values(data.competition);
 
-            setCompetitionsData(prev => {
+            setCompetitionsData(() => {
                 const updated: Record<number, typeof competitions[0]> = {};
                 competitions.forEach(c => {
                     if (c.id) {
@@ -160,7 +158,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         else if (data.game) {
             const games: Game[] = Object.values(data.game);
 
-            setGamesData(prev => {
+            setGamesData(() => {
                 const updated: Record<number, typeof games[0]> = {};
                 games.forEach(g => {
                     if (g.id) {
@@ -224,7 +222,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
     useEffect(() => {
         const filteredCompetitionsData = Object.fromEntries(
-            Object.entries(competitionsData).filter(([key, value]) => value?.id)
+            Object.entries(competitionsData).filter(([, value]) => value?.id)
         );
         const isDifferent = Object.keys(filteredCompetitionsData).length !== Object.keys(competitionsData).length;
         if (isDifferent) {
@@ -240,7 +238,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
     useEffect(() => {
         const filteredData = Object.fromEntries(
-            Object.entries(gamesData).filter(([key, value]) => value?.id)
+            Object.entries(gamesData).filter(([, value]) => value?.id)
         );
         const isDifferent = Object.keys(filteredData).length !== Object.keys(gamesData).length;
         if (isDifferent) {

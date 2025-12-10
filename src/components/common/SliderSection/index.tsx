@@ -26,10 +26,6 @@ interface Sport {
 
 export const SliderSection: React.FC<SliderSectionProps> = ({
   title,
-  buttonText,
-  variant = 'default',
-  route = '/',
-  comp = 'livefixture',
   onItemClick
 
 }) => {

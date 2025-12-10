@@ -15,7 +15,7 @@ import { OddItem } from '@/components/common/MatchTable';
 const GameItem: React.FC<{ game: Game, sendMessage: any }> = ({ game, sendMessage }) => {
     const { gamesData } = useWebSocket();
     const filteredGamesData = Object.fromEntries(
-        Object.entries(gamesData).filter(([key, value]) => value?.id)
+        Object.entries(gamesData).filter(([, value]) => value?.id)
     );
 
     const team1 = game.team1_name || 'Team 1';
@@ -204,10 +204,10 @@ export const LiveBettingMatchList: React.FC = () => {
     const { gamesData, liveGamesList, competitionsData, sendMessage } = useWebSocket();
 
     const filteredCompetitionsData = Object.fromEntries(
-        Object.entries(competitionsData).filter(([key, value]) => value?.id)
+        Object.entries(competitionsData).filter(([, value]) => value?.id)
     );
     const filteredGamesData = Object.fromEntries(
-        Object.entries(gamesData).filter(([key, value]) => value?.id)
+        Object.entries(gamesData).filter(([, value]) => value?.id)
     );
     const defaultAlias: string = Object.values(filteredGamesData)[0]?.sport_alias || '';
     const [activeCat, setActiveCat] = useState<string>(defaultAlias);

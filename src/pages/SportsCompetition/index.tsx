@@ -121,6 +121,7 @@ export const SportsCompetition: React.FC<SportsCompetitionProps> = ({ sportName:
                             <div className='flex items-center  gap-2'>
                                 <NavigableSwiper
                                     items={tabs}
+                                    variant='default'
                                     renderSlide={(tab) => (
                                         <button
                                             type='button'

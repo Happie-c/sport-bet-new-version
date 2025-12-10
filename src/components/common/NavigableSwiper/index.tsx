@@ -27,7 +27,6 @@ export function NavigableSwiper<T>({
   variant = "default",
   spaceBetween = 4,
   slidesPerView = 'auto',
-  className = '',
   keyExtractor = (_, index) => index,
   showNavigation = true,
   onSlideChange,

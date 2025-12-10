@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import './index.scss'
 import LiveBadge from '@/components/ui/MatchCard/common/LiveBadge';
 import Team1Img from '@/assets/images/team1.png';

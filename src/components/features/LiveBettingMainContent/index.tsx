@@ -11,7 +11,7 @@ import './index.scss';
 import { SwitchComponent, MatchResultItem, NavigableSwiper } from '@/components/common';
 import { BackButton } from '@/components';
 import { useWebSocket } from '@/contexts/WebSocketContext';
-import { Game, Info } from '@/types';
+import { Game } from '@/types';
 
 const TeamItem: React.FC<{ logo: string }> = ({ logo }) => {
     return (
@@ -56,7 +56,7 @@ export const LiveBettingMainContent: React.FC = () => {
     const [collapseKey, setCollapseKey] = useState(0);
     const { gamesData, sortedMarketsData } = useWebSocket();
     const filteredGamesData = Object.fromEntries(
-        Object.entries(gamesData).filter(([key, value]) => value?.id)
+        Object.entries(gamesData).filter(([, value]) => value?.id)
     );
     const game: Game[] = Object.values(filteredGamesData);
     const infos: any | undefined = game[0]?.info;

@@ -8,7 +8,6 @@ import './index.scss';
 import { MatchResultItem, NavigableSwiper } from '@/components/common';
 import { BackButton } from '@/components';
 import { useWebSocket } from '@/contexts/WebSocketContext';
-import { Game } from '@/types';
 
 const TeamItem: React.FC<{ logo: string }> = ({ logo }) => {
     return (
@@ -25,10 +24,10 @@ const TeamItem: React.FC<{ logo: string }> = ({ logo }) => {
 }
 
 export const MatchesPage: React.FC = () => {
-    const [allCollapse, setAllCollapse] = useState(false);
+    const [allCollapse, _setAllCollapse] = useState(false);
     const [activeTab, setActiveTab] = useState('all');
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
-    const [collapseKey, setCollapseKey] = useState(0);
+    const [collapseKey, _setCollapseKey] = useState(0);
     const { gamesData, sortedMarketsData } = useWebSocket();
     const game: any = Object.values(gamesData).find((game: any) => game.id);
     const infos: any | undefined = game?.info;
