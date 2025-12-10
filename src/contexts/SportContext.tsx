@@ -53,7 +53,6 @@ export const SportProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [sportState, setSportState] = useState<SportState>(initialSportState)
 
   const setSelectedSport = useCallback((sport: string | null) => {
-    console.log({sport})
     setSportState(prev => ({
       ...prev,
       selectedSport: sport,

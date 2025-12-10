@@ -11,6 +11,7 @@ import ArrowRightImg from '@assets/images/arrow-right-new.svg';
 
 export interface NavigableSwiperProps<T> {
   items: T[];
+  variant: string;
   renderSlide: (item: T, index: number) => React.ReactNode;
   spaceBetween?: number;
   slidesPerView?: 'auto' | number;
@@ -23,6 +24,7 @@ export interface NavigableSwiperProps<T> {
 export function NavigableSwiper<T>({
   items,
   renderSlide,
+  variant = "default",
   spaceBetween = 4,
   slidesPerView = 'auto',
   className = '',
@@ -47,7 +49,7 @@ export function NavigableSwiper<T>({
   };
 
   return (
-    <div className={`navigable-swiper-container ${className}`}>
+    <div className={`navigable-swiper-container ${variant}`}>
       <Swiper
         modules={[Navigation]}
         spaceBetween={spaceBetween}
@@ -56,13 +58,13 @@ export function NavigableSwiper<T>({
         onSlideChange={handleSlideChange}
       >
         {items.map((item, index) => (
-          <SwiperSlide key={keyExtractor(item, index)} style={{ width: 'auto' }}>
+          <SwiperSlide key={String(keyExtractor(item, index))} style={{ width: 'auto' }}>
             {renderSlide(item, index)}
           </SwiperSlide>
         ))}
       </Swiper>
       {showNavigation && !(isBeginning && isEnd) && (
-        <div className='swiper-navigation-buttons'>
+        <div className={`swiper-navigation-buttons ${variant}`}>
           <button
             type='button'
             className='swiper-btn-prev'
@@ -82,8 +84,9 @@ export function NavigableSwiper<T>({
             <img src={ArrowRightImg} alt="Next" />
           </button>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 

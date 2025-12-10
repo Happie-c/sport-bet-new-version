@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import './i18n'
 import { ThemeProvider, ScreenSizeProvider, LanguageProvider } from './contexts'
+import { WebSocketProvider } from './contexts/WebSocketContext.tsx'
 
 // Prevent zoom gestures
 const preventZoom = (e: Event) => {
@@ -30,13 +31,16 @@ document.addEventListener('gesturechange', (e) => e.preventDefault());
 document.addEventListener('gestureend', (e) => e.preventDefault());
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
+
   <React.StrictMode>
-    <LanguageProvider>
-      <ThemeProvider>
-        <ScreenSizeProvider breakpoint={768}>
-          <App />
-        </ScreenSizeProvider>
-      </ThemeProvider>
-    </LanguageProvider>
-  </React.StrictMode>,
+    <WebSocketProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <ScreenSizeProvider breakpoint={768}>
+            <App />
+          </ScreenSizeProvider>
+        </ThemeProvider>
+      </LanguageProvider>
+    </WebSocketProvider>
+  </React.StrictMode>
 )

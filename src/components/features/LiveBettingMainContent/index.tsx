@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
-
-
-import FraIcon from '@assets/images/france.png';
+import React, { useEffect, useState } from 'react';
 import StatImg from '@assets/images/statistics-bars.svg'
 import BellImg from '@assets/images/bell.svg'
 import Team1Img from '@assets/images/team1.png';
 import Team2Img from '@assets/images/team2.png';
 import CornerImg from '@assets/images/corner.svg';
 import StatsImg from '@assets/images/stats.svg';
-import FootballImg from '@assets/images/football.svg';
 import AllCollapseImg from '@assets/images/all-collapse.svg';
 import AllExpandImg from '@assets/images/all-expand.svg';
-
-
-import { Transition } from '@headlessui/react';
 import './index.scss';
 import { SwitchComponent, MatchResultItem, NavigableSwiper } from '@/components/common';
 import { BackButton } from '@/components';
+import { useWebSocket } from '@/contexts/WebSocketContext';
+import { Game, Info } from '@/types';
 
 const TeamItem: React.FC<{ logo: string }> = ({ logo }) => {
     return (
@@ -32,56 +26,6 @@ const TeamItem: React.FC<{ logo: string }> = ({ logo }) => {
     )
 
 }
-
-const MatchResult: React.FC<{ isDetail: boolean }> = ({ isDetail }) => {
-    const results = [
-        { time: 90, team: 2, name: 'Asociacion Deportiva Sarchi', state: 'yellow' },
-        { time: 83, team: 1, name: 'Inter San Carlos', state: 'red' },
-        { time: 59, team: 1, name: 'Inter San Carlos', state: 'yellow' },
-        { time: 45, team: 1, name: 'Inter San Carlos', state: 'goal' },
-    ]
-    return (
-        <Transition
-            show={isDetail}
-            enter="transition-opacity duration-75"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            as="div"
-            className='w-full'
-        >
-            <div className='flex flex-col items-center gap-2 justify-center w-full'>
-                <div className='text-[14px] flex items-center rounded justify-center px-3 py-2 bg-[var(--bg-card)] w-full'>Second Half 2-0</div>
-                <div className='w-full'>
-                    {results.map((result, index) => (
-                        <div key={index} className={`flex w-full p-2 items-center gap-2 ${result.team == 2 ? 'justify-end' : 'justify-start'}`}>
-                            <div className='text-[14px]'>{result.time}'</div>
-                            {result.state === 'yellow' && <div className='w-3 h-4 bg-yellow-400 rounded' />}
-                            {result.state === 'red' && <div className='w-3 h-4 bg-red-400 rounded' />}
-                            {result.state === 'goal' && <img src={FootballImg} className='w-4 h-4' />}
-                            <div className='text-[14px] font-bold'>{result.name}</div>
-                        </div>
-                    ))}
-                </div>
-                <div className='text-[14px] flex items-center rounded justify-center px-3 py-2 bg-[var(--bg-card)] w-full'>First Half 2-0</div>
-                <div className='w-full'>
-                    {results.map((result, index) => (
-                        <div key={index} className={`flex w-full p-2 items-center gap-2 ${result.team == 2 ? 'justify-end' : 'justify-start'}`}>
-                            <div className='text-[14px]'>{result.time}'</div>
-                            {result.state === 'yellow' && <div className='w-3 h-4 bg-yellow-400 rounded' />}
-                            {result.state === 'red' && <div className='w-3 h-4 bg-red-400 rounded' />}
-                            {result.state === 'goal' && <img src={FootballImg} className='w-4 h-4' />}
-                            <div className='text-[14px] font-bold'>{result.name}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </Transition>
-    )
-}
-
 
 
 const MatchStatItem: React.FC<{ xG: string, yellowCard: string, corner: string }> = ({ xG, yellowCard, corner }) => {
@@ -104,22 +48,54 @@ const MatchStatItem: React.FC<{ xG: string, yellowCard: string, corner: string }
 }
 
 export const LiveBettingMainContent: React.FC = () => {
-    const [isDetail, setIsDetail] = useState(false);
     const [allCollapse, setAllCollapse] = useState(false);
     const [accordionStates, setAccordionStates] = useState<boolean[]>([false, false, false])
     const [activeTab, setActiveTab] = useState('all');
     const [enabled, setEnabled] = useState(true);
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
     const [collapseKey, setCollapseKey] = useState(0);
+    const { gamesData, sortedMarketsData } = useWebSocket();
+    const filteredGamesData = Object.fromEntries(
+        Object.entries(gamesData).filter(([key, value]) => value?.id)
+    );
+    const game: Game[] = Object.values(filteredGamesData);
+    const infos: any | undefined = game[0]?.info;
+    const marketResult = sortedMarketsData.map((group: any) => {
+        const updatedItems: any = {};
 
-    const baseTabs = ['all', 'main', 'goals', 'asianLines'];
+        Object.entries(group.items).forEach(([key, value]) => {
+            const newKey = key + "@" + group.group_name;
+            updatedItems[newKey] = value;
+        });
+
+        return {
+            id: group.group_id,
+            items: updatedItems
+        };
+    });
+
+    const [flag, setFlag] = useState(marketResult.length === 0 ? false : true)
+    React.useEffect(() => {
+        setActiveTab('All');
+    }, []);
+    useEffect(() => {
+        setFlag(marketResult.length === 0 ? false : true)
+    }, [marketResult])
+
+
+
+
+
+    const baseTabs = sortedMarketsData.reduce((acc: string[], s: any) => {
+        return [...acc, s.group_name];
+    }, ["All"]);
+
     const tabs = favorites.size > 0 ? ['favoriteMarkets', ...baseTabs] : baseTabs;
 
     const handleToggleAllAccordions = () => {
         const newCollapseState = !allCollapse;
         setAllCollapse(newCollapseState);
         setAccordionStates(accordionStates.map(() => newCollapseState));
-        // Increment key to force re-render of MatchResultItems
         setCollapseKey(prev => prev + 1);
     };
 
@@ -135,24 +111,20 @@ export const LiveBettingMainContent: React.FC = () => {
         });
     };
 
-    const matchResultItems = [
-        { id: 'fulltime', title: "Full Time result 🚀", col: 3, oddValues: [{ label: 'Bangladesh', odd: '1.24' }, { label: 'Draw', odd: '1.24' }, { label: 'India', odd: '1.24' }] },
-        { id: 'goals', title: "Goals Over/Under 🚀", col: 2, oddValues: [{ label: 'Over 5.5', odd: '1.24' }, { label: 'Under 5.5', odd: '1.24' }, { label: 'Over 6.5', odd: '1.24' }, { label: 'Under 6.5', odd: '1.24' }] },
-        { id: 'teamscore', title: "Team to Score Goal (6) 🚀", col: 3, oddValues: [{ label: 'Bangladesh', odd: '1.24' }, { label: 'No Goals', odd: '1.24' }, { label: 'India', odd: '1.24' }] }
-    ];
 
-    const displayedItems = activeTab === 'favoriteMarkets' 
-        ? matchResultItems.filter(item => favorites.has(item.id))
-        : matchResultItems;
+    const displayedItems: any = activeTab === 'favoriteMarkets'
+        ? marketResult.filter((item: any) => favorites.has(item.id))
+        : marketResult;
 
     return (
         <div className='live-betting-main-content'>
             <div className='header flex justify-between items-center'>
                 <BackButton />
                 <div className='flex items-center gap-2'>
-                    <img src={FraIcon} alt="Fra" className='w-6 h-6 rounded-full' />
-                    <div className='text-[var(--text-secondary)] text-xs'>
-                        France - Pro A, Match day 13
+                    {/* <img src={FraIcon} alt="Fra" className='w-6 h-6 rounded-full' /> */}
+                    <div className='text-[var(--text-secondary)] text-md'>
+                        {game[0]?.region_alias || 'N/A'} - {game[0]?.sport_alias || 'N/A'}
+
                     </div>
                 </div>
                 <div className='flex items-center gap-2'>
@@ -167,19 +139,24 @@ export const LiveBettingMainContent: React.FC = () => {
             <div className='content'>
                 <TeamItem logo={Team1Img} />
                 <div>
-                    <div className="text-sm bg-[var(--bg-card)] rounded px-3 py-2 font-bold flex">
-                        Match Finished
+                    <div className="text-sm bg-[var(--bg-card)] rounded px-3 py-2 font-bold flex items-center justify-center text-center">
+                        {!infos?.current_game_time ? "-- -- --" : (
+                            infos?.add_minutes == "" &&
+                            infos?.current_game_time == "90") ? "Finished" : (
+                            infos?.current_game_time == "90" ? ("90" +
+                                infos?.add_minutes) :
+                                infos?.current_game_time)}
                     </div>
                 </div>
                 <TeamItem logo={Team2Img} />
                 <div className="text-[16px] fond-bold flex  w-full text-center justify-center h-16">
-                    Mirassol SP
+                    {game[0]?.team1_name}
                 </div>
                 <div className="text-[32px] leading-8 font-extrabold flex items-start justify-center h-16">
-                    2 - 1
+                    {infos?.score1} - {infos?.score2}
                 </div>
                 <div className='text-[16px] font-bold flex  w-full justify-center h-16'>
-                    Fluminense RJ
+                    {game[0]?.team2_name}
                 </div>
                 <MatchStatItem xG="1.24" yellowCard="3" corner="5" />
                 <div className='text-[14px] font-bold flex justify-center text-[var(--text-secondary)]'>
@@ -187,27 +164,16 @@ export const LiveBettingMainContent: React.FC = () => {
                 </div>
                 <MatchStatItem xG="1.24" yellowCard="3" corner="5" />
             </div>
-            <div className='flex justify-center flex-col items-center gap-4 w-full mt-7'>
-                <div className={`flex transition-all duration-300 w-full max-h-[300px] overflow-y-auto pr-2`}>
-                    <MatchResult isDetail={isDetail} />
-                </div>
-                <div className="close-btn" onClick={() => { setIsDetail(!isDetail) }}>
-                    {!isDetail ? <>
-                        90' <div className='bg-yellow-400 rounded-sm w-3 h-4' /> Asociacion Deportiva Sarchi
-                    </> : <>Close</>}
-                    {
-                        isDetail ? <ChevronUpIcon className='w-4 h-4' /> : <ChevronDownIcon className='w-4 h-4' />
-                    }
-                </div>
-            </div>
+
             <div className='flex w-full justify-between mt-8'>
                 <NavigableSwiper
+                    variant="default"
                     items={tabs}
-                    keyExtractor={(tab) => tab}
+                    keyExtractor={(tab: any) => tab}
                     renderSlide={(tab) => (
-                        <button 
-                            type='button' 
-                            className={`tab-btn capitalize ${activeTab === tab ? 'active' : ''}`} 
+                        <button
+                            type='button'
+                            className={`tab-btn capitalize ${activeTab === tab ? 'active' : ''}`}
                             onClick={() => { setActiveTab(tab) }}
                         >
                             {tab === 'favoriteMarkets' ? 'favorite markets' : tab}
@@ -228,23 +194,19 @@ export const LiveBettingMainContent: React.FC = () => {
                 </div>
             </div>
             <div className="tab-content flex flex-col gap-2">
-                {displayedItems.map((item) => (
-                    <MatchResultItem 
+                {displayedItems.map((item: any) => (
+                    <MatchResultItem
                         key={`${item.id}-${collapseKey}`}
                         id={item.id}
-                        title={item.title}
-                        col={item.col}
-                        oddValues={item.oddValues}
+                        items={item.items}
+                        flag={flag}
+                        activeTab={activeTab}
                         isCollapsed={allCollapse}
                         isFavorite={favorites.has(item.id)}
                         onToggleFavorite={handleToggleFavorite}
                     />
                 ))}
             </div>
-
-
-
-
         </div>
     )
 }

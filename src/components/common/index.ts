@@ -1,4 +1,5 @@
 export { MatchSection } from './MatchSection';
+export { SliderSection } from './SliderSection';
 export { default as MatchTable } from './MatchTable';
 export { default as Filter } from './Filter';
 export type { FilterProps } from './Filter';

@@ -1,33 +1,43 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import PlusImg from '@assets/images/plus.svg';
 import CheckedImg from '@assets/images/check_circle.svg';
-import { leaguesData } from '@utils/const';
-import { useSport, LeagueData } from '@contexts/SportContext';
+import { useSport } from '@contexts/SportContext';
 import "./index.scss";
+import { ImgList } from '@utils/const';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
-export const LeaguesItem: React.FC<{ league: LeagueData }> = ({ league }) => {
-    const navigate = useNavigate();
+export const LeaguesItem: React.FC<{ league: any; onCompetitionClick?: (competitionId: string) => void }> = ({ league, onCompetitionClick }) => {
     const { toggleLeagueInCoupon, isLeagueInCoupon } = useSport();
+    const navigate = useNavigate();
+    const { sportName } = useParams<{ sportName: string }>();
     const isChecked = isLeagueInCoupon(league.id);
 
-    const handleToggle = () => {
+    const handleToggle = (e: React.MouseEvent) => {
+        e.stopPropagation();
         toggleLeagueInCoupon(league);
     };
 
+    const handleLeagueClick = () => {
+        if (onCompetitionClick) {
+            onCompetitionClick(String(league.id));
+        } else if (sportName && league.id) {
+            navigate(`/sports/${sportName}/competitions/${league.id}`);
+        }
+    };
+
     return (
-        <div className='league-item-container' onClick={() => navigate(`/sports/competitions`)}>
-            <div className='flex items-center'>
+        <div className='league-item-container' onClick={handleLeagueClick}>
+            <div className='flex items-center' >
                 <div className='w-12 h-full flex items-center justify-center'>
-                    <img src={league.countryFlag} alt={league.countryName} width={24} height={24} className='rounded'/>
+                    <img src={ImgList['Default']} alt="Default" width={24} height={24} className='rounded' />
                 </div>
                 <div className='flex flex-col justify-center flex-1'>
                     <div className='country-name'>
-                        {league.countryName}
+                        {league.name}
                     </div>
                     <div className='league-name'>
-                        {league.leagueName}
+                        {league.name}
                     </div>
                 </div>
             </div>
@@ -40,14 +50,15 @@ export const LeaguesItem: React.FC<{ league: LeagueData }> = ({ league }) => {
     )
 }
 interface LeaguesProps {
-    data?: LeagueData[];
+    data?: any;
+    onCompetitionClick?: (competitionId: string) => void;
 }
 
-export const Leagues: React.FC<LeaguesProps> = ({ data = leaguesData }) => {
+export const Leagues: React.FC<LeaguesProps> = ({ data, onCompetitionClick }) => {
     return (
         <div className='leagues-container'>
-            {data.map(league => (
-                <LeaguesItem key={league.id} league={league} />
+            {Object.values(data).map((league: any) => (
+                <LeaguesItem key={league.id} league={league} onCompetitionClick={onCompetitionClick} />
             ))}
         </div>
     )

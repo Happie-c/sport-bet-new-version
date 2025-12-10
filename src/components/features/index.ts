@@ -1,4 +1,5 @@
 export { Carousel } from './Carousel';
+export { Slider } from './Slider/index'
 export { LiveMatch } from './LiveMatch/index'
 export { TopBets } from './TopBets/index'
 export { LiveFixture } from './LiveFixture/index'

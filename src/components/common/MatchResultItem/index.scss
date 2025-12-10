@@ -3,7 +3,7 @@
     border-radius: 16px;
     background: var(--bg-card);
     padding: 12px;
-   
+
 
     .star-btn {
         display: flex;
@@ -23,4 +23,18 @@
             transform: scale(0.9);
         }
     }
+}
+
+
+.odds-item.first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.odds-item.last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.odds-item.both {
+    border-radius: 8px 8px 8px 8px !important;
+
 }

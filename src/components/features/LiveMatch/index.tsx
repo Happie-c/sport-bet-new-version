@@ -3,10 +3,10 @@ import { MatchSection } from "../../common";
 
 export const LiveMatch: React.FC = () => {
   return (
-    <MatchSection 
+    <MatchSection
       title="Live matches"
       buttonText="All live fixtures"
-      variant="default"   
+      variant="default"
       route="/live-betting"
     />
   );

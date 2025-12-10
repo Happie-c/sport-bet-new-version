@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import MatchTable from "../MatchTable";
 import InfoSVG from "../../../assets/images/info_circle_empty.svg";
 import './index.scss';
-import { liveMatchCats } from "../../../utils/const";
+import { ImgList } from "../../../utils/const";
 import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useWebSocket } from "@/contexts/WebSocketContext";
+import { Sport } from "@/types";
 
 interface MatchSectionProps {
   title: string;
@@ -19,9 +21,23 @@ export const MatchSection: React.FC<MatchSectionProps> = ({
   buttonText,
   variant = 'default',
   route = '/',
-  comp = 'livefixture'
+  comp = 'livefixture',
 }) => {
-  const [activeCat, setActiveCat] = useState<string>("football");
+  const { liveGamesList } = useWebSocket();
+  const tmpArr: Sport[] = useMemo(() => {
+    const arr = Object.values(liveGamesList) as Sport[];
+    arr.sort((a, b) => {
+      return (a.order ?? 0) - (b.order ?? 0);
+    });
+    return arr;
+  }, [liveGamesList]);
+  const [activeCat, setActiveCat] = useState<string>("");
+  useEffect(() => {
+    const value: any = tmpArr?.[0]?.alias
+    if (value && activeCat === "") {
+      setActiveCat(value)
+    }
+  }, [tmpArr.length, activeCat])
   const navigate = useNavigate();
   return (
     <div className={`flex flex-col gap-4 match-section-container mx-5 mt-2 items-center ${variant === 'white' ? 'white-variant' : ''}`}>
@@ -42,12 +58,14 @@ export const MatchSection: React.FC<MatchSectionProps> = ({
         </div>
         <div className="flex items-center gap-[2px]">
           {
-            liveMatchCats.map((cat) => (
-              <div key={cat.name} className={`flex items-center justify-center gap-2 match-cat ${activeCat === cat.name ? 'active' : ''}`} onClick={() => setActiveCat(cat.name)}>
-                <img src={cat.img} alt={cat.name} />
+            tmpArr.map((cat: any) => (
+              <div key={cat.id} className={`flex items-center justify-center gap-2 match-cat ${activeCat === cat.alias ? 'active' : ''}`} onClick={() => setActiveCat(cat.alias)}>
+                <img src={ImgList[cat.alias] ? ImgList[cat.alias] : ImgList["Default"]} alt={cat.name} />
+
               </div>
             ))
           }
+
         </div>
         <div className="right ml-auto">
           <button type="button" className="all-fixtures-button" onClick={() => navigate(route)}>
@@ -58,8 +76,7 @@ export const MatchSection: React.FC<MatchSectionProps> = ({
         </div>
       </div>
       <div className={`w-full ${variant === 'white' ? 'bg-white rounded-2xl' : ''}`}>
-
-        <MatchTable variant={variant} comp={comp} />
+        <MatchTable variant={variant} comp={comp} sportFilter={activeCat} />
       </div>
     </div>
   );

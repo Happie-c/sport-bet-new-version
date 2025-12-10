@@ -10,8 +10,10 @@ import { LiveBettingDetailPage } from './pages/LiveBettingDetail'
 import { MatchesPage } from './pages/MatchesPage'
 import { SportsCompetition } from './pages/SportsCompetition'
 
+
 function App() {
   return (
+
     <Router>
       <Layout>
         <Routes>
@@ -19,14 +21,16 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/live-betting" element={<LiveBettingPage />} />
           <Route path="/live-schedule" element={<LiveSchedulePage />} />
+          <Route path="/sports/:sportName" element={<SportPage />} />
+          <Route path="/sports/:sportName/competitions/:competitionId" element={<SportsCompetition />} />
           <Route path="/sports/matches" element={<MatchesPage />} />
-          <Route path="/sports/competitions" element={<SportsCompetition />} />
-          <Route path="/sports/:sport" element={<SportPage />} />
           <Route path="/live-betting/:id" element={<LiveBettingDetailPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>
     </Router>
+
+
   )
 }
 

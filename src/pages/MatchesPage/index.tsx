@@ -1,223 +1,157 @@
-import React, { useState, useRef } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import type { Swiper as SwiperType } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/navigation';
+import React, { useEffect, useState } from 'react';
+import StatImg from '@assets/images/statistics-bars.svg'
+import BellImg from '@assets/images/bell.svg'
+import Team1Img from '@assets/images/team1.png';
+import Team2Img from '@assets/images/team2.png';
+import StatsImg from '@assets/images/stats.svg';
 import './index.scss';
-import './index.scss';
-import { BackButton, MatchResultItem, SwitchComponent } from '@/components';
-import WTAImg from '../../assets/images/wta.png';
-import { SportRightAccordion } from '../../components/features';
-import StatsImg from '../../assets/images/stats.svg';
-import BellImg from "../../assets/images/bell.svg";
-import CzImg from "../../assets/images/cz.png";
-import FrImg from "../../assets/images/france.png";
-import StreamImg from "../../assets/images/stream.svg";
-import TennisImg from "../../assets/images/tennis_hard.svg";
-import AllCollapseImg from '@assets/images/all-collapse.svg';
-import AllExpandImg from '@assets/images/all-expand.svg';
-import ArrowLeftImg from '@assets/images/arrow-left-new.svg';
-import ArrowRightImg from '@assets/images/arrow-right-new.svg';
+import { MatchResultItem, NavigableSwiper } from '@/components/common';
+import { BackButton } from '@/components';
+import { useWebSocket } from '@/contexts/WebSocketContext';
+import { Game } from '@/types';
 
-const MatchesPageHeader: React.FC = () => {
+const TeamItem: React.FC<{ logo: string }> = ({ logo }) => {
     return (
-        <div className="flex items-center justify-between gap-2">
-            <BackButton variant='white' />
-            <div className="flex gap-1 text-[11px] items-center text-[var(--bg-primary)] ">
-                <img src={WTAImg} alt="WTA" className="w-5 h-5 rounded-full" />
-                WTA 1000 - Wuhan (W) - Matches, Quarter final, Hard
-            </div>
-            <div className="flex gap-2">
-                <div className='flex items-center justify-center cursor-pointer p-2 bg-[#0d38591a] rounded-full'>
-                    <img src={StatsImg} alt="Stats" className="w-5 h-5 opacity-70" />
+        <div className='flex flex-col items-center mb-4 h-14'>
+            <div className='flex items-center gap-2  bg-white relative rounded-full p-2'>
+                <img src={logo} alt={'logo'} className='w-10 h-10 rounded-full' />
+                <div className='absolute bottom-0 right-0 bg-blue-400 rounded-full p-1'>
+                    <img src={StatImg} className='w-2 h-2' style={{ filter: 'brightness(0) invert(1)' }} />
                 </div>
-                <div className='flex items-center justify-center cursor-pointer p-2 bg-[#0d38591a] rounded-full'>
-                    <img src={BellImg} alt="Bell" className="w-5 h-5 opacity-70" />
-                </div>
-
             </div>
         </div>
-
     )
+
 }
 
-const MatchDetail: React.FC = () => {
+export const MatchesPage: React.FC = () => {
     const [allCollapse, setAllCollapse] = useState(false);
-    const [accordionStates, setAccordionStates] = useState<boolean[]>([false, false, false])
     const [activeTab, setActiveTab] = useState('all');
-    const [enabled, setEnabled] = useState(true);
+    const [favorites, setFavorites] = useState<Set<string>>(new Set());
     const [collapseKey, setCollapseKey] = useState(0);
-    const swiperRef = useRef<SwiperType | null>(null);
-    const [isBeginning, setIsBeginning] = useState(true);
-    const [isEnd, setIsEnd] = useState(true);
+    const { gamesData, sortedMarketsData } = useWebSocket();
+    const game: any = Object.values(gamesData).find((game: any) => game.id);
+    const infos: any | undefined = game?.info;
+    const marketResult = sortedMarketsData.map((group: any) => {
+        const updatedItems: any = {};
 
-    const baseTabs = ['main', 'aces', 'double faults', 'service markets', 'breaks', 'duration', 'sets', 'games'];
+        Object.entries(group.items).forEach(([key, value]) => {
+            const newKey = key + "@" + group.group_name;
+            updatedItems[newKey] = value;
+        });
 
-    const handleToggleAllAccordions = () => {
-        const newCollapseState = !allCollapse;
-        setAllCollapse(newCollapseState);
-        setAccordionStates(accordionStates.map(() => newCollapseState));
-        // Increment key to force re-render of MatchResultItems
-        setCollapseKey(prev => prev + 1);
+        return {
+            id: group.group_id,
+            items: updatedItems
+        };
+    });
+
+    const [flag, setFlag] = useState(marketResult.length === 0 ? false : true)
+    React.useEffect(() => {
+        setActiveTab('All');
+    }, []);
+    useEffect(() => {
+        setFlag(marketResult.length === 0 ? false : true)
+    }, [marketResult])
+
+    const baseTabs = sortedMarketsData.reduce((acc: string[], s: any) => {
+        return [...acc, s.group_name];
+    }, ["All"]);
+
+    const tabs = favorites.size > 0 ? ['favoriteMarkets', ...baseTabs] : baseTabs;
+
+    const handleToggleFavorite = (id: string) => {
+        setFavorites(prev => {
+            const newFavorites = new Set(prev);
+            if (newFavorites.has(id)) {
+                newFavorites.delete(id);
+            } else {
+                newFavorites.add(id);
+            }
+            return newFavorites;
+        });
     };
 
-    const matchResultItems = [
-        {
-            id: 'fulltime',
-            title: "Aces 🚀",
-            col: 1,
-            oddValues: [{ label: 'over 3.5', odd: '1.24' }, { label: 'over 4.5', odd: '1.24' }, { label: 'over 5.5', odd: '1.24' }]
-        },
-        {
-            id: 'goals',
-            title: "Katerina Siniakova - Aces 🚀",
-            col: 1,
-            oddValues: [{ label: 'Over 5.5', odd: '1.24' }, { label: 'Under 5.5', odd: '1.24' }, { label: 'Over 6.5', odd: '1.24' }, { label: 'Under 6.5', odd: '1.24' }]
-        },
-        {
-            id: 'teamscore',
-            title: "Jessica Pegula - Aces 🚀",
-            col: 1,
-            oddValues: [{ label: 'Bangladesh', odd: '1.24' }, { label: 'No Goals', odd: '1.24' }, { label: 'India', odd: '1.24' }]
-        }
-    ];
 
+    const displayedItems: any = activeTab === 'favoriteMarkets'
+        ? marketResult.filter((item: any) => favorites.has(item.id))
+        : marketResult;
 
     return (
-        <div>
-            <div className='flex w-full justify-between mt-8'>
-                <div className='tabs-swiper-container'>
-                    <Swiper
-                        modules={[Navigation]}
-                        spaceBetween={4}
-                        slidesPerView="auto"
-                        onSwiper={(swiper) => {
-                            swiperRef.current = swiper;
-                            setIsBeginning(swiper.isBeginning);
-                            setIsEnd(swiper.isEnd);
-                        }}
-                        onSlideChange={(swiper) => {
-                            setIsBeginning(swiper.isBeginning);
-                            setIsEnd(swiper.isEnd);
-                        }}
-                    >
-                        {baseTabs.map((tab) => (
-                            <SwiperSlide key={tab} style={{ width: 'auto' }}>
-                                <button
-                                    type='button'
-                                    className={`tab-btn capitalize ${activeTab === tab ? 'active' : ''}`}
-                                    onClick={() => { setActiveTab(tab) }}
-                                >
-                                    {tab === 'favoriteMarkets' ? 'favorite markets' : tab}
-                                </button>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                    {!(isBeginning && isEnd) && (
-                        <div className='swiper-navigation-buttons mr-1'>
-                            {!isBeginning && (
-                                <button
-                                    type='button'
-                                    className='swiper-btn-prev'
-                                    onClick={() => swiperRef.current?.slidePrev()}
-                                >
-                                    <img src={ArrowLeftImg} alt="Previous" />
-                                </button>
-                            )}
-                            {!isEnd && (
-                                <button
-                                    type='button'
-                                    className='swiper-btn-next'
-                                    onClick={() => swiperRef.current?.slideNext()}
-                                >
-                                    <img src={ArrowRightImg} alt="Next" />
-                                </button>
-                            )}
-                        </div>
-                    )}
+        <div className='matches-page'>
+            <div className='header flex justify-between items-center text-black'>
+                <BackButton />
+                <div className='flex items-center gap-2'>
+                    <div className='text-md'>
+                        {game?.region_alias || 'N/A'} - {game?.sport_alias || 'N/A'}
+
+                    </div>
                 </div>
                 <div className='flex items-center gap-2'>
-                    <div className='flex flex-col justify-center items-center gap-1'>
-                        <SwitchComponent enabled={enabled} setEnabled={setEnabled} enabledBgColor='#53a5aa' disabledBgColor='#0d385933' enabledBallColor='#fff' disabledBallColor='#fff' />
-                        <div className='text-[10px] uppercase font-bold text-[var(--bg-primary)] opacity-60 flex items-center'>
-                            bet builder
-                        </div>
-                    </div>
-                    <div onClick={handleToggleAllAccordions} className={`opacity-60  hover:opacity-100 cursor-pointer ${allCollapse ? 'active' : ''}`} >
-                        <img src={allCollapse ? AllCollapseImg : AllExpandImg} alt="all collapse" style={{filter: 'brightness(0) invert(0)'}} />
-                    </div>
+                    <button type='button' className="btn rounded-full bg-[var(--bg-card)] p-2 hover:bg-[var(--bg-card-hover)]">
+                        <img src={StatsImg} className='w-5 h-5 opacity-70' style={{ filter: 'brightness(0) invert(1)' }} />
+                    </button>
+                    <button type='button' className="btn rounded-full bg-[var(--bg-card)] p-2 hover:bg-[var(--bg-card-hover)]">
+                        <img src={BellImg} className='w-5 h-5 opacity-70' style={{ filter: 'brightness(0) invert(1)' }} />
+                    </button>
                 </div>
             </div>
-            <div className="tab-content flex flex-col gap-2 mt-4">
-                {matchResultItems.map((item) => (
+            <div className='content text-black'>
+                <TeamItem logo={Team1Img} />
+                <div>
+                    <div className="text-sm bg-[var(--bg-card)] rounded px-3 py-2 font-bold flex items-center justify-center text-center">
+                        {!infos?.current_game_time ? "-- -- --" : (
+                            infos?.add_minutes == "" &&
+                            infos?.current_game_time == "90") ? "Finished" : (
+                            infos?.current_game_time == "90" ? ("90" +
+                                infos?.add_minutes) :
+                                infos?.current_game_time)}
+                    </div>
+                </div>
+                <TeamItem logo={Team2Img} />
+                <div className="text-[16px] font-bold flex  w-full text-center justify-center h-16">
+                    {game?.team1_name}
+                </div>
+                <div className="text-[32px] leading-8 font-extrabold flex items-start justify-center h-16">
+                    {infos?.score1} - {infos?.score2}
+                </div>
+                <div className='text-[16px] font-bold flex  w-full justify-center h-16'>
+                    {game?.team2_name}
+                </div>
+            </div>
+
+            <div className='flex w-full justify-between mt-8'>
+                <NavigableSwiper
+                    variant={"default"}
+                    items={tabs}
+                    keyExtractor={(tab: any) => tab}
+                    renderSlide={(tab) => (
+                        <button
+                            type='button'
+                            className={`tab-btn capitalize ${activeTab === tab ? 'active' : ''}`}
+                            onClick={() => { setActiveTab(tab) }}
+                        >
+                            {tab === 'favoriteMarkets' ? 'favorite markets' : tab}
+                        </button>
+                    )}
+                    className='mr-1'
+                />
+            </div>
+            <div className="tab-content flex flex-col gap-2">
+                {displayedItems.map((item: any) => (
                     <MatchResultItem
                         key={`${item.id}-${collapseKey}`}
                         id={item.id}
-                        title={item.title}
-                        col={item.col}
-                        oddValues={item.oddValues}
-                        isCollapsed={allCollapse}
+                        items={item.items}
+                        flag={flag}
+                        activeTab={activeTab}
                         variant='white'
-                        favoriteVisible={false}
+                        isCollapsed={allCollapse}
+                        isFavorite={favorites.has(item.id)}
+                        onToggleFavorite={handleToggleFavorite}
                     />
                 ))}
             </div>
-
         </div>
     )
 }
-
-const MatchesPageLogo: React.FC = () => {
-    return (
-        <div className="logo-section">
-            <div className="w-full flex items-center justify-center gap-2">
-                <img src={CzImg} alt="Cz" className="w-12 h-12" />
-            </div>
-            <div className="flex items-center justify-center gap-2">
-                <img src={StreamImg} alt="Stream" className="w-5 h-5" />
-                <img src={TennisImg} alt="Tennis" className="w-5 h-5" />
-            </div>
-            <div className="w-full flex items-center justify-center gap-2">
-                <img src={FrImg} alt="Fr" className="w-12 h-12" />
-            </div>
-            <div className='flex items-start justify-center gap-2 text-[12px] text-[var(--bg-primary)]'>
-                Katerina Siniakova
-            </div>
-            <div className="flex items-center justify-center ">
-                <div className=" text-[12px] bg-[#0d38591a] text-[var(--bg-primary)] h-8 rounded-lg px-3 py-2">
-                    Fri 06:00
-                </div>
-            </div>
-            <div className='flex items-start justify-center gap-2 text-[12px] text-[var(--bg-primary)]'>
-                essica Pegula
-            </div>
-
-        </div>
-    )
-}
-
-
-export const MatchesPage: React.FC = () => {
-    return (
-        <div className="matches-page">
-            <div className="left-section">
-                <div className="left-section-content gap-8">
-                    <MatchesPageHeader />
-                    <div className='flex items-center justify-center w-full'>
-                        <MatchesPageLogo />
-                    </div>
-                    <MatchDetail />
-                </div>
-            </div>
-
-            <div className="right-section">
-                <div className="right-section-content">
-                    <SportRightAccordion title="Soccer" />
-                    <SportRightAccordion title="Basketball" />
-                </div>
-            </div>
-        </div >
-    );
-};
-
