@@ -90,7 +90,10 @@ export const LiveBettingMainContent: React.FC = () => {
         return [...acc, s.group_name];
     }, ["All"]);
 
-    const tabs = favorites.size > 0 ? ['favoriteMarkets', ...baseTabs] : baseTabs;
+    let tabs: any = favorites.size > 0 ? ['favoriteMarkets', ...baseTabs] : baseTabs;
+    if (tabs.length > 8) {
+        tabs = tabs.slice(0, 8);
+    }
 
     const handleToggleAllAccordions = () => {
         const newCollapseState = !allCollapse;

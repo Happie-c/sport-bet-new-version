@@ -171,19 +171,18 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         if (Object.values(data)
             .filter((d: any) => d.competition)) {
             const comp = Object.values(data)
-                .map((d: any) => d.competition) // extract competition (or undefined)
-                .filter((c: any) => c);         // remove undefined values
+                .map((d: any) => d.competition)
+                .filter((c: any) => c);
             setTmpCompetitionData(comp)
         }
         if (Object.values(data)
             .filter((d: any) => d.game)) {
 
             const game = Object.values(data)
-                .map((d: any) => d.game) // extract competition (or undefined)
+                .map((d: any) => d.game)
                 .filter((c: any) => c);
             setTmpGameData(game)
         }
-        console.log(message, "This is the message!")
     };
     const sendMessage = async (msgData: any) => {
         msgData.id = msgData.id ?? 0;

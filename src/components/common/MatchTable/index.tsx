@@ -4,7 +4,7 @@ import LiveBadge from '@/components/ui/MatchCard/common/LiveBadge';
 import Team1Img from '@/assets/images/team1.png';
 import Team2Img from '@/assets/images/team2.png';
 import StatsIcon from '@/assets/images/stats.svg';
-import Filter from '../Filter';
+import _Filter from '../Filter';
 import { useFilter } from '@/contexts/FilterContext';
 import { filterItems1, filterItems2, filterItems3 } from '@/utils/const';
 import { useNavigate } from 'react-router-dom';
@@ -336,9 +336,9 @@ export const MatchTable: React.FC<MatchTableProps> = ({ variant = 'default', com
                 <div className='table-header-item'>
                     {header3}
                 </div>
-                <div className='table-header-item absolute right-4'>
+                {/* <div className='table-header-item absolute right-4'>
                     <Filter variant={variant} />
-                </div>
+                </div> */}
             </div>
             <div className="table-body">
                 {liveMatches.length === 0 ? (

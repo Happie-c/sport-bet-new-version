@@ -53,6 +53,9 @@ import TVShowsAndMovies from '../assets/images/icons8-tv-64.png';
 import WWE from '../assets/images/icons8-wwe-64.png';
 import CyberFootball from '../assets/images/icons8-football-kick-48.png';
 import Valorant from '../assets/images/icons8-valorant-64.png';
+import Archery from '../assets/images/achery.png';
+import Badminton from '../assets/images/badminton.svg';
+
 
 import Default from '../assets/images/icons8-sport-32.png';
 
@@ -103,6 +106,8 @@ export const ImgList: any = {
     "WWE": WWE,
     "CyberFootball": CyberFootball,
     "Valorant": Valorant,
+    "Archery": Archery,
+    "Badminton": Badminton,
 
 
     "Motor": MotorImg,
