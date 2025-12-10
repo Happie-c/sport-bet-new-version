@@ -24,6 +24,7 @@ export const MiniGames: React.FC = () => {
             </div>
 
             <div className="mini-games-swiper">
+                
                 <Swiper
                     spaceBetween={12}
                     breakpoints={{
