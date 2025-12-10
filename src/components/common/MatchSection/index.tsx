@@ -68,7 +68,7 @@ export const MatchSection: React.FC<MatchSectionProps> = ({
 
         </div>
         <div className="right ml-auto">
-          <button type="button" className="all-fixtures-button" onClick={() => navigate(route ? "/" : "/")}>
+          <button type="button" className="all-fixtures-button" >
             <div className="flex items-center leading-4">
               {buttonText} <ChevronRightIcon className="w-[15px] h-[15px] ml-2" />
             </div>

@@ -55,6 +55,7 @@ import CyberFootball from '../assets/images/icons8-football-kick-48.png';
 import Valorant from '../assets/images/icons8-valorant-64.png';
 import Archery from '../assets/images/achery.png';
 import Badminton from '../assets/images/badminton.svg';
+import Loading from '../assets/images/loading.svg';
 
 
 import Default from '../assets/images/icons8-sport-32.png';
@@ -108,6 +109,7 @@ export const ImgList: any = {
     "Valorant": Valorant,
     "Archery": Archery,
     "Badminton": Badminton,
+    "Loading": Loading,
 
 
     "Motor": MotorImg,

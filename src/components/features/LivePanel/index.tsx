@@ -4,6 +4,7 @@ import { livePanelIcons } from '@/utils/const';
 import './index.scss';
 import { OddItem } from '@/components/common/MatchTable';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ImgList } from '@/utils/const';
 
 export const LivePanel: React.FC = () => {
     return (
@@ -16,8 +17,8 @@ export const LivePanel: React.FC = () => {
                     </div>
                 ))}
             </div>
-            <div className='w-full h-[160px] bg-transparent'>
-
+            <div className='w-full h-[160px] bg-transparent flex items-center justify-center'>
+                <img src={ImgList["Loading"]} alt="Loading" className='w-20 h-20' />
             </div>
             <div className='w-full flex gap-2 items-center'>
                 <div className='w-full grid grid-cols-3 gap-0.5'>

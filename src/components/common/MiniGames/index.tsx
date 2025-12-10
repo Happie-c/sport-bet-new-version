@@ -2,6 +2,7 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import './index.scss';
+import { ImgList } from '@/utils';
 
 const miniGames = [
     { id: 1, name: 'Aviator', color: '#FF6B6B' },
@@ -18,9 +19,10 @@ export const MiniGames: React.FC = () => {
             <div className='mini-games-header'>
                 <h2 className='text-[13px] font-bold'>Mini Games</h2>
             </div>
-            <div className="w-full h-[240px] bg-gradient-to-b from-[#333333] to-[#000000] rounded-md game-preview">
+            <div className="w-full h-[240px] bg-gradient-to-b from-[#333333] to-[#000000] rounded-md game-preview flex items-center justify-center">
+                <img src={ImgList["Loading"]} alt="Loading" className='w-20 h-20' />
             </div>
-            
+
             <div className="mini-games-swiper">
                 <Swiper
                     spaceBetween={12}
@@ -35,8 +37,8 @@ export const MiniGames: React.FC = () => {
                     {miniGames.map((game) => (
                         <SwiperSlide key={game.id}>
                             <div className="game-card">
-                                <div 
-                                    className="game-card-preview" 
+                                <div
+                                    className="game-card-preview"
                                     style={{ backgroundColor: game.color }}
                                 >
                                 </div>
